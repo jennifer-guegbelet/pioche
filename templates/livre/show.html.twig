@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Livre{% endblock %}
+
+{% block body %}
+    <h1>Livre</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ livre.id }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ livre.titre }}</td>
+            </tr>
+            <tr>
+                <th>Auteur</th>
+                <td>{{ livre.auteur }}</td>
+            </tr>
+            <tr>
+                <th>Genre</th>
+                <td>{{ livre.genre.nom }}</td>
+            </tr>
+            <tr>
+                <th>AnneePublication</th>
+                <td>{{ livre.anneePublication }}</td>
+            </tr>
+            <tr>
+                <th>Resume</th>
+                <td>{{ livre.resume }}</td>
+            </tr>
+            <tr>
+                <th>Isbn</th>
+                <td>{{ livre.isbn }}</td>
+            </tr>
+            <tr>
+                <th>Langue</th>
+                <td>{{ livre.langue }}</td>
+            </tr>
+            <tr>
+                <th>Editeur</th>
+                <td>{{ livre.editeur }}</td>
+            </tr>
+            <tr>
+                <th>Disponibilite</th>
+                <td>{{ livre.disponibilite ? 'Yes' : 'No' }}</td>
+                {% if livre.disponibilite %}
+                   <a class-"btn" href="{{ path('app_emprunt_new', {'id': livre.id}) }}">Emprunter</a>
+                {% else %}
+                    <a href="{{ path('reservation_new', {'id': livre.id}) }}">Reserver</a>
+                {% endif %}
+                <td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_livre_index') }}">back to list</a>
+
+    <a href="{{ path('app_livre_edit', {'id': livre.id}) }}">edit</a>
+
+    {{ include('livre/_delete_form.html.twig') }}
+{% endblock %}
