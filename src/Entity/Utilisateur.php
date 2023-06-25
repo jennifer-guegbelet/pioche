@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -9,6 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity()
+ * @ORM\Table(name="utilisateur")
  */
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
@@ -40,7 +43,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $adresse;
 
-     /**
+    /**
      * @ORM\Column(type="date")
      */
     private $dateAdhesion;
@@ -55,15 +58,20 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $roles = [];
 
+    /**
+     * @ORM\OneToMany(targetEntity="Reservation", mappedBy="utilisateur")
+     */
+    private $reservations;
 
     /**
-     * @ORM\PrePersist()
+     * @ORM\OneToMany(targetEntity="Emprunt", mappedBy="utilisateur")
      */
-    public function handleDateAdhesion(): void
+    private $emprunts;
+
+    public function __construct()
     {
-        if ($this->dateAdhesion === null || $this->dateAdhesion == '0000-00-00') {
-            $this->dateAdhesion = new \DateTime();
-        }
+        $this->reservations = new ArrayCollection();
+        $this->emprunts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -171,8 +179,59 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function __toString(): string
+    public function getReservations(): Collection
     {
-        return $this->nom;
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): self
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations[] = $reservation;
+            $reservation->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): self
+    {
+        if ($this->reservations->contains($reservation)) {
+            $this->reservations->removeElement($reservation);
+            // set the owning side to null (unless already changed)
+            if ($reservation->getUtilisateur() === $this) {
+                $reservation->setUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getEmprunts(): Collection
+    {
+        return $this->emprunts;
+    }
+
+    public function addEmprunt(Emprunt $emprunt): self
+    {
+        if (!$this->emprunts->contains($emprunt)) {
+            $this->emprunts[] = $emprunt;
+            $emprunt->setUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEmprunt(Emprunt $emprunt): self
+    {
+        if ($this->emprunts->contains($emprunt)) {
+            $this->emprunts->removeElement($emprunt);
+            // set the owning side to null (unless already changed)
+            if ($emprunt->getUtilisateur() === $this) {
+                $emprunt->setUtilisateur(null);
+            }
+        }
+
+        return $this;
     }
 }
