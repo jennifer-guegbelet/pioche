@@ -20,7 +20,9 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-free": "^6.4.0",
         "autoprefixer": "^10.4.14",
-        "postcss-loader": "^7.3.3"
+        "postcss-loader": "^7.3.3",
+        "startbootstrap-modern-business": "^5.0.7"
     }
 }

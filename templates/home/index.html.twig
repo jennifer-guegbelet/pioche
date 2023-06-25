@@ -3,20 +3,98 @@
 {% block title %}Pioche{% endblock %}
 
 {% block body %}
+<!-- Page content-->
+<div class="container">
+    <div class="row">
+        <!-- Blog entries-->
+        <div class="col-lg-8">
+            {% set maxId = 0 %}
+            {% set maxElement = null %}
+            {% for livre in  pagination %}
+                    {% if attribute(livre, 'id') > maxId %}
+                    <!-- Featured blog post-->
+                    <div class="card mb-4">
+                        <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/000/6c757d.jpg&text={{livre.titre}}" alt="..." /></a>
+                       <div class="card-body">
+                            <div class="small text-muted">{{ livre.anneePublication }}</div>
+                            <h2 class="card-title h4"><a href="{{ path('app_livre_show', {'id': livre.id}) }}">{{ livre.titre }}</a></h2>
+                            <p class="card-text">{{ livre.resume }}</p>
+                            <p class="card-text">Genre :
+                                <a href="{{ path('app_genre_show', {'id': livre.genre.id}) }}">
+                                    {{ livre.genre.nom }}
+                                </a>
+                            </p>
+                             {% if livre.emprunts is not empty and livre.emprunts[0].utilisateur == app.user %}
+                                <div class="text-success">
+                                    Le livre a été emprunté par vous.
+                                </div>
+                            {% endif %}
 
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Bienvenue sur le site en ligne de la PIOCHE! </h1>
-
-    <h3>
-    Bienvenue dans notre bibliothèque en ligne !<br>
-     Explorez des milliers de livres passionnants, élargissez vos horizons et laissez votre imagination s'épanouir.<br>
-     Profitez de l'accès à une collection variée et plongez-vous dans des aventures captivantes, le tout à portée de clic. 
-     <br><br>Bonne lecture !
-    </h3p>
+                            {% if livre.disponibilite %}
+                            <a class="btn btn-primary" href="{{ path('app_emprunt_new', {'id': livre.id}) }}">Emprunter →</a>
+                            {% else %}
+                                <a class="btn btn-primary" href="{{ path('reservation_new', {'id': livre.id}) }}">Reserver →</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% set maxId = attribute(livre, 'id') %}
+                    {% set maxElement = livre %}
+                {% endif %}
+            {% endfor %}
+            <!-- Nested row for non-featured blog posts-->
+            <div class="row">
+                <div class="col-lg-6">
+                {% for livre in livres %}
+                    <!-- Blog post-->
+                    <div class="card mb-4">
+                        <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/000/6c757d.jpg&text={{livre.titre}}" alt="..." /></a>
+                        <div class="card-body">
+                            <div class="small text-muted">{{ livre.anneePublication }}</div>
+                            <h2 class="card-title h4"><a href="{{ path('app_livre_show', {'id': livre.id}) }}">{{ livre.titre }}</a></h2>
+                            <p class="card-text">{{ livre.resume }}</p>
+                            <p class="card-text">Genre :
+                            <a href="{{ path('app_genre_show', {'id': livre.genre.id}) }}">
+                                {{ livre.genre.nom }}
+                            </a>
+                            </p>
+                            {% if livre.emprunts is not empty and livre.emprunts[0].utilisateur == app.user %}
+                                <div class="text-success">
+                                    Le livre a été emprunté par vous.
+                                </div>
+                            {% endif %}
+                            <br>
+                            {% if livre.disponibilite %}
+                            <a class="btn btn-primary" href="{{ path('app_emprunt_new', {'id': livre.id}) }}">Emprunter →</a>
+                            {% else %}
+                                <a class="btn btn-primary" href="{{ path('reservation_new', {'id': livre.id}) }}">Reserver →</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+            <!-- Pagination-->
+            {{ knp_pagination_render(pagination) }}
+        </div>
+        <!-- Side widgets-->
+        <div class="col-lg-4">
+            <!-- Categories widget-->
+            <div class="card mb-4">
+                <div class="card-header">Categories</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                        
+                            <ul class="list-unstyled mb-0">
+                                {% for genre in  genres %}
+                                <li><a href="{{path('app_genre_show', {'id': genre.id})}}">{{genre.nom}}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

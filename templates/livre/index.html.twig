@@ -3,49 +3,46 @@
 {% block title %}Livre index{% endblock %}
 
 {% block body %}
-    <h1>Livre index</h1>
+<h1>Collection</h1>
+<div class="row">
+    <div class="col-lg-6">
+    {% for livre in livres %}
+        <!-- Blog post-->
+        <div class="card mb-4">
+            <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/000/6c757d.jpg&text={{livre.titre}}" alt="..." /></a>
+            <div class="card-body">
+                <div class="small text-muted">{{ livre.anneePublication }}</div>
+                <h2 class="card-title h4"><a href="{{ path('app_livre_show', {'id': livre.id}) }}">{{ livre.titre }}</a></h2>
+                <p class="card-text">{{ livre.resume }}</p>
+                <p class="card-text">Genre :
+                    <a href="{{ path('app_genre_show', {'id': livre.genre.id}) }}">
+                     {{ livre.genre.nom }}
+                    </a>
+                </p>
+                 {% if livre.emprunts is not empty and livre.emprunts[0].utilisateur == app.user %}
+                    <div class="text-success">
+                        Le livre a été emprunté par vous.
+                    </div>
+                {% endif %}
+                <br>
+                {% if livre.disponibilite %}    
+                    <a class="btn btn-primary" href="{{ path('app_emprunt_new', {'id': livre.id}) }}">Emprunter →</a>
+                {% else %}
+                    <a class="btn btn-primary" href="{{ path('reservation_new', {'id': livre.id}) }}">Reserver →</a>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+    <div class="col-md-12">
+        <div class="error-template">
+            <h1>
+                Oops!</h1>
+            <h2>
+                Aucun resultat pour cette reche</h2>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+</div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Titre</th>
-                <th>Auteur</th>
-                <th>Genre</th>
-                <th>AnneePublication</th>
-                <th>Resume</th>
-                <th>Isbn</th>
-                <th>Langue</th>
-                <th>Editeur</th>
-                <th>Disponibilite</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for livre in livres %}
-            <tr>
-                <td>{{ livre.id }}</td>
-                <td>{{ livre.titre }}</td>
-                <td>{{ livre.auteur }}</td>
-                <td>{{ livre.genre.nom }}</td>
-                <td>{{ livre.anneePublication }}</td>
-                <td>{{ livre.resume }}</td>
-                <td>{{ livre.isbn }}</td>
-                <td>{{ livre.langue }}</td>
-                <td>{{ livre.editeur }}</td>
-                <td>{{ livre.disponibilite ? 'Yes' : 'No' }}</td>
-                <td>
-                    <a href="{{ path('app_livre_show', {'id': livre.id}) }}">show</a>
-                    <a href="{{ path('app_livre_edit', {'id': livre.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="11">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_livre_new') }}">Create new</a>
 {% endblock %}

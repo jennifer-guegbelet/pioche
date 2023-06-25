@@ -1,20 +1,38 @@
-{% extends 'base.html.twig' %}
+{% extends '@EasyAdmin/layout.html.twig' %}
 
-{% block title %}Hello AdminController!{% endblock %}
+{% block content %}
+    <div id="sidebar" class="sidebar sidebar-dark sidebar-fixed">
+        <div class="sidebar-inner">
+            <ul class="sidebar-nav">
+                {% for menuItem in easyadmin_menu() %}
+                    {% if menuItem.isSection() %}
+                        <li class="nav-item nav-section">
+                            <span>{{ menuItem.label }}</span>
+                        </li>
+                    {% elseif menuItem.isMenu() %}
+                        <li class="nav-item nav-submenu">
+                            <a href="#" class="nav-link">
+                                <i class="{{ menuItem.icon }}"></i>
+                                <span>{{ menuItem.label }}</span>
+                            </a>
+                            <ul class="nav">
+                                {% for subMenuItem in menuItem.children %}
+                                    <li class="nav-item">
+                                        <a href="{{ subMenuItem.url }}" class="nav-link">
+                                            <i class="{{ subMenuItem.icon }}"></i>
+                                            <span>{{ subMenuItem.label }}</span>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/Applications/MAMP/htdocs/pioche/src/Controller/AdminController.php'|file_link(0) }}">src/Controller/AdminController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/Applications/MAMP/htdocs/pioche/templates/admin/index.html.twig'|file_link(0) }}">templates/admin/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <div id="content" class="content">
+        {# Contenu principal de votre application #}
+    </div>
 {% endblock %}

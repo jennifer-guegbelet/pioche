@@ -1,51 +1,59 @@
 <?php
 
+
 namespace App\Form;
 
 use App\Entity\Emprunt;
+use App\Entity\Livre;
+use App\Entity\Utilisateur;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class EmpruntType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $livre = $options['livre'];
+        $utilisateur = $options['utilisateur'];
+
         $builder
-          
-            ->add('dateEmprunt', DateTimeType::class, [
-                'label' => 'Date',
-                'data' => (new \DateTime()),
-                'attr' => [
-                    'readonly' => 'readonly',
-                ],
+            ->add('livre', EntityType::class, [
+                'class' => Livre::class,
+                'choices' => [$livre],
+                'choice_label' => 'titre',
+                'disabled' => true,
+                'required' => true,
             ])
-            ->add('dateRetour', DateTimeType::class, [
-                'label' => 'Date',
-                'data' => (new \DateTime())->modify('+1 month'),
-                'attr' => [
-                    'readonly' => 'readonly',
-                ],
+            ->add('dateEmprunt', DateType::class, [
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'dd/MM/yyyy',
+                'attr' => ['class' => 'datepicker'],
             ])
-            ->add('utilisateur', HiddenType::class, [
-                'data' => $options['utilisateur'] ? $options['utilisateur']->getId() : null, // Récupérer l'utilisateur en tant que valeur par défaut du champ caché
+            ->add('dateRetourPrevue', DateType::class, [
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'dd/MM/yyyy',
+                'attr' => ['class' => 'datepicker'],
             ])
-            ->add('livre', HiddenType::class, [
-                'data' => $options['livre'] ? $options['livre']->getId() : null, // Récupérer le livre en tant que valeur par défaut du champ caché
-            ])
-            ->add('exemplaire', HiddenType::class, [
-            ])
-        ;
+            ->add('utilisateur', EntityType::class, [
+                'class' => Utilisateur::class,
+                'choices' => [$utilisateur],
+                'choice_label' => 'username',
+                'disabled' => true,
+                'required' => true,
+            ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Emprunt::class,
-            'livre' => null, // Définir l'option 'livre' avec une valeur par défaut null
-            'utilisateur' => null, // Définir l'option 'utilisateur' avec une valeur par défaut null
+            'livre' => null,
+            'utilisateur' => null,
         ]);
     }
 }

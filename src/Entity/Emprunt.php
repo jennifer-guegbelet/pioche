@@ -1,14 +1,11 @@
 <?php
 
-// src/Entity/Emprunt.php
-
 namespace App\Entity;
 
-use App\Repository\EmpruntRepository;
 use Doctrine\ORM\Mapping as ORM;
-
+use App\Repository\EmpruntRepository;
 /**
- * @ORM\Entity(repositoryClass=EmpruntRepository::class)
+ * @ORM\Entity
  */
 class Emprunt
 {
@@ -20,16 +17,16 @@ class Emprunt
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Utilisateur::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="Livre", inversedBy="emprunts")
+     * @ORM\JoinColumn(name="livre_id", referencedColumnName="id")
      */
-    private $utilisateur;
+    private $livre;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Exemplaire::class)
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\ManyToOne(targetEntity="Utilisateur")
+     * @ORM\JoinColumn(name="utilisateur_id", referencedColumnName="id")
      */
-    private $exemplaire;
+    private $utilisateur;
 
     /**
      * @ORM\Column(type="date")
@@ -39,19 +36,35 @@ class Emprunt
     /**
      * @ORM\Column(type="date")
      */
-    private $dateRetour;
+    private $dateRetourPrevue;
 
-     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Livre", inversedBy="emprunts")
-     * @ORM\JoinColumn(nullable=false)
+    /**
+     * @ORM\Column(type="date", nullable=true)
      */
-    private $livre;
+    private $dateRetourEffective;
 
-    // Getters et Setters pour chaque attribut
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $statut;
+
+    // Getters et Setters
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getLivre(): ?Livre
+    {
+        return $this->livre;
+    }
+
+    public function setLivre(?Livre $livre): self
+    {
+        $this->livre = $livre;
+
+        return $this;
     }
 
     public function getUtilisateur(): ?Utilisateur
@@ -62,18 +75,6 @@ class Emprunt
     public function setUtilisateur(?Utilisateur $utilisateur): self
     {
         $this->utilisateur = $utilisateur;
-
-        return $this;
-    }
-
-    public function getExemplaire(): ?Exemplaire
-    {
-        return $this->exemplaire;
-    }
-
-    public function setExemplaire(?Exemplaire $exemplaire): self
-    {
-        $this->exemplaire = $exemplaire;
 
         return $this;
     }
@@ -90,28 +91,39 @@ class Emprunt
         return $this;
     }
 
-    public function getDateRetour(): ?\DateTimeInterface
+    public function getDateRetourPrevue(): ?\DateTimeInterface
     {
-        return $this->dateRetour;
+        return $this->dateRetourPrevue;
     }
 
-    public function setDateRetour(\DateTimeInterface $dateRetour): self
+    public function setDateRetourPrevue(\DateTimeInterface $dateRetourPrevue): self
     {
-        $this->dateRetour = $dateRetour;
+        $this->dateRetourPrevue = $dateRetourPrevue;
 
         return $this;
     }
 
-    public function getLivre(): ?Livre
+    public function getDateRetourEffective(): ?\DateTimeInterface
     {
-        return $this->livre;
+        return $this->dateRetourEffective;
     }
 
-    public function setLivre(?Livre $livre): self
+    public function setDateRetourEffective(?\DateTimeInterface $dateRetourEffective): self
     {
-        $this->livre = $livre;
+        $this->dateRetourEffective = $dateRetourEffective;
 
         return $this;
     }
 
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): self
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
 }

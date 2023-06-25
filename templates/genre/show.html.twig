@@ -1,26 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Genre{% endblock %}
+{% block title %}Liste des Livres par Genre{% endblock %}
 
 {% block body %}
-    <h1>Genre</h1>
+    <div class="container">
+        <h1>Liste des {{ genre_courant.nom }}</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ genre.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ genre.nom }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="row">
+            <div class="col-md-4">
+                <h2>Genres</h2>
+                <ul class="list-group">
+                    {% for genre in genres %}
+                        <li class="list-group-item">
+                            <a href="{{ path('app_genre_show', {'id': genre.id}) }}">
+                                {{ genre.nom }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
 
-    <a href="{{ path('app_genre_index') }}">back to list</a>
-
-    <a href="{{ path('app_genre_edit', {'id': genre.id}) }}">edit</a>
-
-    {{ include('genre/_delete_form.html.twig') }}
+            <div class="col-md-8">
+                <h2>Livres</h2>
+                {% if pagination is empty %}
+                    <p>Aucun livre trouvé pour ce genre.</p>
+                {% else %}
+                    {% for livre in pagination %}
+                        <!-- Blog post-->
+                        <div class="card mb-4">
+                            <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/000/6c757d.jpg&text={{livre.titre}}" alt="..." /></a>
+                            <div class="card-body">
+                                <div class="small text-muted">{{ livre.anneePublication }}</div>
+                                <h2 class="card-title h4"><a href="{{ path('app_livre_show', {'id': livre.id}) }}">{{ livre.titre }}</a></h2>
+                                <p class="card-text">{{ livre.resume }}</p>
+                                <p class="card-text">Genre :
+                                    <a href="{{ path('app_genre_show', {'id': livre.genre.id}) }}">
+                                         {{ livre.genre.nom }}
+                                    </a>
+                                </p>
+                                {% if livre.emprunts is not empty and livre.emprunts[0].utilisateur == app.user %}
+                                    <div class="text-success">
+                                        Le livre a été emprunté par vous.
+                                    </div>
+                                {% endif %}
+                                <br>
+                                {% if livre.disponibilite %}
+                                <a class="btn btn-primary" href="{{ path('app_emprunt_new', {'id': livre.id}) }}">Emprunter →</a>
+                                {% else %}
+                                    <a class="btn btn-primary" href="{{ path('reservation_new', {'id': livre.id}) }}">Reserver →</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {{ knp_pagination_render(pagination) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

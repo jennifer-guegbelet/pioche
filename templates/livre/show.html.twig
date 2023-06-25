@@ -3,62 +3,67 @@
 {% block title %}Livre{% endblock %}
 
 {% block body %}
-    <h1>Livre</h1>
+    <h1>{{ livre.titre }}</h1>
+    <div>
+    <img class="card-img-top" src="https://dummyimage.com/700x350/000/6c757d.jpg&text={{livre.titre}}" alt="..." />
+    </div>
+    <div>
+        <table class="table table-bordered table-striped">
+            <tbody>
+                 <tr>
+                    <th>Resumé</th>
+                    <td>{{ livre.resume }}</td>
+                </tr>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ livre.id }}</td>
-            </tr>
-            <tr>
-                <th>Titre</th>
-                <td>{{ livre.titre }}</td>
-            </tr>
-            <tr>
-                <th>Auteur</th>
-                <td>{{ livre.auteur }}</td>
-            </tr>
-            <tr>
-                <th>Genre</th>
-                <td>{{ livre.genre.nom }}</td>
-            </tr>
-            <tr>
-                <th>AnneePublication</th>
-                <td>{{ livre.anneePublication }}</td>
-            </tr>
-            <tr>
-                <th>Resume</th>
-                <td>{{ livre.resume }}</td>
-            </tr>
-            <tr>
-                <th>Isbn</th>
-                <td>{{ livre.isbn }}</td>
-            </tr>
-            <tr>
-                <th>Langue</th>
-                <td>{{ livre.langue }}</td>
-            </tr>
-            <tr>
-                <th>Editeur</th>
-                <td>{{ livre.editeur }}</td>
-            </tr>
-            <tr>
-                <th>Disponibilite</th>
-                <td>{{ livre.disponibilite ? 'Yes' : 'No' }}</td>
-                {% if livre.disponibilite %}
-                   <a class-"btn" href="{{ path('app_emprunt_new', {'id': livre.id}) }}">Emprunter</a>
-                {% else %}
-                    <a href="{{ path('reservation_new', {'id': livre.id}) }}">Reserver</a>
-                {% endif %}
-                <td>
-            </tr>
-        </tbody>
-    </table>
+                <tr>
+                    <th>Auteur</th>
+                    <td>{{ livre.auteur }}</td>
+                </tr>
+                <tr>
+                    <th>Genre</th>
+                    <td>{{ livre.genre.nom }}</td>
+                </tr>
+                <tr>
+                    <th>Année de publication</th>
+                    <td>{{ livre.anneePublication }}</td>
+                </tr>
+               
+                <tr>
+                    <th>ISBN</th>
+                    <td>{{ livre.isbn }}</td>
+                </tr>
+                <tr>
+                    <th>Langue</th>
+                    <td>{{ livre.langue }}</td>
+                </tr>
+                <tr>
+                    <th>Editeur</th>
+                    <td>{{ livre.editeur }}</td>
+                </tr>
+                <tr>
+                    <th>Disponibilité</th>
+                    <td>{{ livre.disponibilite ? 'Oui' : 'Non' }}
+                        {% if livre.emprunts is not empty and livre.emprunts[0].utilisateur == app.user %}
+                            <div class="text-success">
+                                Le livre a été emprunté par vous.
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <a class="btn btn-secondary" href="{{ path('app_livre_index') }}">Retours à la liste</a>
+    {% if livre.disponibilite %}
+    <a class="btn btn-primary" href="{{ path('app_emprunt_new', {'id': livre.id}) }}">Emprunter</a>
+    {% else %}
+        <a class="btn btn-primary" href="{{ path('reservation_new', {'id': livre.id}) }}">Reserver</a>
+    {% endif %}
 
-    <a href="{{ path('app_livre_index') }}">back to list</a>
+    {% if is_granted('ROLE_ADMIN') %}
 
-    <a href="{{ path('app_livre_edit', {'id': livre.id}) }}">edit</a>
+        <a href="{{ path('app_livre_edit', {'id': livre.id}) }}">edit</a>
 
-    {{ include('livre/_delete_form.html.twig') }}
+        {{ include('livre/_delete_form.html.twig') }}
+    {% endif %}
 {% endblock %}

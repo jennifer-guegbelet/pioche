@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Genre;
 use App\Form\GenreType;
+use App\Repository\LivreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/genre')]
 class GenreController extends AbstractController
@@ -46,10 +48,23 @@ class GenreController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_genre_show', methods: ['GET'])]
-    public function show(Genre $genre): Response
+    public function show(Genre $genre,LivreRepository $livreRepository,EntityManagerInterface $entityManager,PaginatorInterface $paginator,Request $request): Response
     {
+        $donnees = $livreRepository->findByGenre($genre);
+
+        $genres = $entityManager
+        ->getRepository(Genre::class)->findAll();
+
+        // Paginer les données
+        $pagination = $paginator->paginate(
+            $donnees,
+            $request->query->getInt('page', 1), // Numéro de page par défaut
+            10 // Nombre d'éléments par page
+        );
         return $this->render('genre/show.html.twig', [
-            'genre' => $genre,
+            'genres' => $genres,
+            'pagination' => $pagination,
+            'genre_courant' => $genre
         ]);
     }
 

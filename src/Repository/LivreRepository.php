@@ -39,21 +39,25 @@ class LivreRepository extends ServiceEntityRepository
         }
     }
 
-    public function searchLivres($keyword)
+    public function searchLivres(string $keyword)
     {
-        $queryBuilder = $this->createQueryBuilder('l');
-    
-        $queryBuilder->where(
-            $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like('l.titre', ':keyword'),
-                $queryBuilder->expr()->like('l.auteur', ':keyword')
+        $qb = $this->createQueryBuilder('livre');
+        $qb->leftJoin('livre.genre', 'genre');
+        $qb->andWhere(
+            $qb->expr()->orX(
+                $qb->expr()->like('livre.titre', ':keyword'),
+                $qb->expr()->like('livre.isbn', ':keyword'),
+                $qb->expr()->like('livre.auteur', ':keyword'),
+                $qb->expr()->like('livre.resume', ':keyword'),
+                $qb->expr()->like('genre.nom', ':keyword'),
+                $qb->expr()->like('livre.anneePublication', ':keyword')
             )
         );
-    
-        $queryBuilder->setParameter('keyword', '%' . $keyword . '%');
-    
-        return $queryBuilder->getQuery()->getResult();
+        $qb->setParameter('keyword', '%' . $keyword . '%');
+        return $qb->getQuery()->getResult();
     }
+    
+    
 
 //    /**
 //     * @return Livre[] Returns an array of Livre objects

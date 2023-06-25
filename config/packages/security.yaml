@@ -19,7 +19,10 @@ security:
         main:            
        
             custom_authenticator: App\Security\AppCustomAuthenticator
-
+            access_denied_url: / # URL de la page d'accès refusé
+            logout:
+                path: app_logout # Chemin de déconnexion
+                target: app_home # Page de redirection après la déconnexion
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -29,7 +32,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+         - { path: ^/admin, roles: ROLE_ADMIN }
          - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
