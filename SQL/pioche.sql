@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : ven. 23 juin 2023 à 20:36
+-- Généré le : dim. 25 juin 2023 à 14:41
 -- Version du serveur : 5.7.39
 -- Version de PHP : 8.2.0
 
@@ -43,12 +43,21 @@ CREATE TABLE `auteur` (
 
 CREATE TABLE `emprunt` (
   `id` int(11) NOT NULL,
-  `utilisateur_id` int(11) NOT NULL,
-  `exemplaire_id` int(11) DEFAULT NULL,
+  `utilisateur_id` int(11) DEFAULT NULL,
   `date_emprunt` date NOT NULL,
-  `date_retour` date NOT NULL,
-  `livre_id` int(11) NOT NULL
+  `date_retour_prevue` date NOT NULL,
+  `livre_id` int(11) DEFAULT NULL,
+  `date_retour_effective` date DEFAULT NULL,
+  `statut` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `emprunt`
+--
+
+INSERT INTO `emprunt` (`id`, `utilisateur_id`, `date_emprunt`, `date_retour_prevue`, `livre_id`, `date_retour_effective`, `statut`) VALUES
+(1, 1, '2023-06-25', '2023-07-10', 1, NULL, 'En cours'),
+(2, 2, '2023-06-25', '2023-07-10', 2, NULL, 'En cours');
 
 -- --------------------------------------------------------
 
@@ -116,7 +125,8 @@ CREATE TABLE `livre` (
 --
 
 INSERT INTO `livre` (`id`, `titre`, `auteur`, `annee_publication`, `resume`, `isbn`, `langue`, `editeur`, `disponibilite`, `genre_id`) VALUES
-(1, 'Black woman win', 'Naomie', 2023, 'Black Woman Win\" est une célébration vibrante de la force et de la résilience des femmes noires. Plongez dans cet ouvrage inspirant qui met en lumière leurs victoires triomphantes', '978-1-234567-89-0', 'Français', 'Naomie', 1, 7);
+(1, 'Black woman win', 'Naomie', 2023, 'Black Woman Win\" est une célébration vibrante de la force et de la résilience des femmes noires. Plongez dans cet ouvrage inspirant qui met en lumière leurs victoires triomphantes', '978-1-234567-89-0', 'Français', 'Naomie', 0, 7),
+(2, 'Black man win', 'Naomie', 2023, 'Black man Win\" est une célébration vibrante de la force et de la résilience des hommes noires. Plongez dans cet ouvrage inspirant qui met en lumière leurs victoires triomphantes', '978-1-234567-89-0', 'Français', 'Pela', 0, 7);
 
 -- --------------------------------------------------------
 
@@ -170,7 +180,25 @@ CREATE TABLE `utilisateur` (
 --
 
 INSERT INTO `utilisateur` (`id`, `email`, `nom`, `prenom`, `adresse`, `date_adhesion`, `password`, `roles`) VALUES
-(1, 'test@mail.com', 'Testeur', 'test', '12 rue de la liberté', '2023-06-23', '$2y$13$AIAz/Xh92CUQDg84eEmCX.6rSkwttCjiIVG5mYqs7p7HR7hk8YGGa', '[]');
+(1, 'test@mail.com', 'Testeur', 'test', '12 rue de la liberté', '2023-06-23', '$2y$13$AIAz/Xh92CUQDg84eEmCX.6rSkwttCjiIVG5mYqs7p7HR7hk8YGGa', '[]'),
+(2, 'admin@mail.com', 'Administrateur', 'admin', '12 rue de la liberté', '2023-06-23', '$2y$13$AIAz/Xh92CUQDg84eEmCX.6rSkwttCjiIVG5mYqs7p7HR7hk8YGGa', '[\"ROLE_USER\",\"ROLE_ADMIN\"]');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `utilisateurs`
+--
+
+CREATE TABLE `utilisateurs` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nom` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `prenom` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `adresse` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `date_adhesion` date NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `roles` longtext COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '(DC2Type:json)'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Index pour les tables déchargées
@@ -188,7 +216,6 @@ ALTER TABLE `auteur`
 ALTER TABLE `emprunt`
   ADD PRIMARY KEY (`id`),
   ADD KEY `IDX_364071D7FB88E14F` (`utilisateur_id`),
-  ADD KEY `IDX_364071D75843AA21` (`exemplaire_id`),
   ADD KEY `IDX_364071D737D925CB` (`livre_id`);
 
 --
@@ -236,6 +263,13 @@ ALTER TABLE `utilisateur`
   ADD UNIQUE KEY `UNIQ_1D1C63B3E7927C74` (`email`);
 
 --
+-- Index pour la table `utilisateurs`
+--
+ALTER TABLE `utilisateurs`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UNIQ_497B315EE7927C74` (`email`);
+
+--
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
@@ -249,7 +283,7 @@ ALTER TABLE `auteur`
 -- AUTO_INCREMENT pour la table `emprunt`
 --
 ALTER TABLE `emprunt`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT pour la table `exemplaires`
@@ -267,7 +301,7 @@ ALTER TABLE `genres`
 -- AUTO_INCREMENT pour la table `livre`
 --
 ALTER TABLE `livre`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT pour la table `messenger_messages`
@@ -285,7 +319,13 @@ ALTER TABLE `reservation`
 -- AUTO_INCREMENT pour la table `utilisateur`
 --
 ALTER TABLE `utilisateur`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT pour la table `utilisateurs`
+--
+ALTER TABLE `utilisateurs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Contraintes pour les tables déchargées
@@ -296,7 +336,6 @@ ALTER TABLE `utilisateur`
 --
 ALTER TABLE `emprunt`
   ADD CONSTRAINT `FK_364071D737D925CB` FOREIGN KEY (`livre_id`) REFERENCES `livre` (`id`),
-  ADD CONSTRAINT `FK_364071D75843AA21` FOREIGN KEY (`exemplaire_id`) REFERENCES `exemplaires` (`id`),
   ADD CONSTRAINT `FK_364071D7FB88E14F` FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateur` (`id`);
 
 --
