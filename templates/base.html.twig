@@ -11,16 +11,17 @@
     </head>
      <body class="d-flex flex-column">
         <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-blue-pioche">
             <div class="container px-5">
-                <a class="navbar-brand" href="{{path("app_home")}}">PIOCHE</a>
+                <a class="navbar-brand" href="{{path("app_home")}}"><img class="zoom-image" src="{{ asset('images/logo.jpg') }}" alt="Description de l'image">
+</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item"><a class="nav-link" href="{{path("app_home")}}">Accueil</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{path("app_livre_index")}}">Livres</a></li>
                         {% if is_granted('ROLE_ADMIN') %}
-                        <li class="nav-item"><a class="nav-link" href="{{path("app_livre_index")}}">Administration</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{path("app_admin")}}">Administration</a></li>
                         {% endif %}
                         
                         {% if app.user %}
@@ -73,10 +74,10 @@
         </div>
         <!-- Footer-->
         <hr>
-        <footer class="bg-dark py-4 mt-auto">
+        <footer class="bg-blue-pioche py-4 mt-auto">
             <div class="container px-5">
                 <div class="row align-items-center justify-content-between flex-column flex-sm-row">
-                    <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; Pioche 2023</div></div>       
+                    <div class="col-auto"><div class="small m-0 text-blue">Copyright &copy; Pioche 2023</div></div>       
                 </div>
             </div>
         </footer>

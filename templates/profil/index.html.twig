@@ -5,6 +5,8 @@
 {% block body %}
     <div class="container">
         <h1>Profil</h1>
+        {% set editUrl = path('utilisateur_edit', {'id': utilisateur.id}) %}
+        <a href="{{ editUrl }}">Modifier les informations</a>
         <div class="card mb-4">
             <div class="card-body">
                 <h5 class="card-title">Informations personnelles</h5>

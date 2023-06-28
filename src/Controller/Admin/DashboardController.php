@@ -13,6 +13,7 @@ use App\Entity\Livre;
 use App\Entity\Utilisateur;
 use App\Entity\Reservation;
 use App\Entity\Auteur;
+use App\Entity\Emprunt;
 
 class DashboardController extends AbstractDashboardController
 {
@@ -46,6 +47,10 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        
+        yield MenuItem::linkToUrl('Retour vers le site', 'fa fa-arrow-left', '/')
+        ->setLinkTarget('_self');
+
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
     
         yield MenuItem::section('Bibliothèque');
@@ -61,5 +66,8 @@ class DashboardController extends AbstractDashboardController
     
         yield MenuItem::section('Auteurs');
         yield MenuItem::linkToCrud('Auteurs', 'fa fa-user', Auteur::class);
+
+        yield MenuItem::section('Emprunt');
+        yield MenuItem::linkToCrud('Emprunt', 'fa fa-book', Emprunt::class);
     }
 }

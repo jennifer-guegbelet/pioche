@@ -11,15 +11,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/livre')]
 class LivreController extends AbstractController
 {
     #[Route('/', name: 'app_livre_index', methods: ['GET'])]
-    public function index(LivreRepository $livreRepository): Response
+    public function index(LivreRepository $livreRepository,PaginatorInterface $paginator,Request $request): Response
     {
+        // Paginer les données
+        $pagination = $paginator->paginate(
+            $livreRepository->findAll(),
+            $request->query->getInt('page', 1), // Numéro de page par défaut
+            10 // Nombre d'éléments par page
+        );
+
         return $this->render('livre/index.html.twig', [
-            'livres' => $livreRepository->findAll(),
+            'pagination' => $pagination,
         ]);
     }
 
